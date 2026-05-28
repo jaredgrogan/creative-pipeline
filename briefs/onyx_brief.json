@@ -1,0 +1,26 @@
+{
+  "campaign_id": "onyx_brand_campaign",
+  "region": "US",
+  "language": "en",
+  "target_audience": "urban professionals and remote workers 22-40",
+  "campaign_message": "Slow Down, Wake Up.",
+  "brand": {
+    "name": "Onyx Coffee Co.",
+    "logo_path": null,
+    "colors": ["#1A1A1A", "#C68B2F", "#FFFFFF"]
+  },
+  "products": [
+    {
+      "id": "onyx_cold_brew_concentrate",
+      "name": "Onyx Cold Brew Concentrate",
+      "description": "Dark matte glass bottle of cold brew concentrate with a near-black label and warm amber typography, ice cubes and roasted coffee beans scattered on a weathered oak surface, moody low morning light, specialty coffee product photography",
+      "asset_path": null
+    },
+    {
+      "id": "onyx_oat_latte",
+      "name": "Onyx Oat Latte",
+      "description": "Perfectly layered oat latte in a clear glass, rich dark cold brew beneath a smooth pour of creamy oat milk, warm amber tones, minimalist coffee shop surface, slight angle shot, artisan coffee product photography",
+      "asset_path": null
+    }
+  ]
+}

@@ -1,0 +1,2330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CREATIVEpipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------------ */
+/* Design system                                                        */
+/* ------------------------------------------------------------------ */
+:root {
+  --bg:      #ffffff;
+  --s1:      #f2f2f2;
+  --s2:      #eeeeee;
+  --s3:      #e6e6e6;
+  --border:  rgba(0,0,0,0.09);
+  --border2: rgba(0,0,0,0.18);
+  --accent:  #007aff;
+  --accent2: #007aff;
+  --green:   #0a9e78;
+  --red:     #d63040;
+  --amber:   #c47c08;
+  --text:    #111111;
+  --muted:   #888888;
+  --dim:     #cccccc;
+  --radius:  6px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Google Sans Flex', 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before { display: none; }
+
+/* ------------------------------------------------------------------ */
+/* Top progress bar                                                     */
+/* ------------------------------------------------------------------ */
+#topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 1000;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+#topbar.active { opacity: 1; }
+#topbar-fill {
+  height: 100%;
+  background: var(--accent);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+#topbar.indeterminate #topbar-fill {
+  width: 60%;
+  animation: indeterminate 1.4s ease-in-out infinite;
+}
+@keyframes indeterminate {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(266%); }
+}
+
+/* ------------------------------------------------------------------ */
+/* Header                                                               */
+/* ------------------------------------------------------------------ */
+header {
+  position: fixed;
+  top: 2px; left: 0; right: 0;
+  height: 56px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+  z-index: 100;
+}
+.logo { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+.logo span { color: var(--accent2); letter-spacing: -0.03em; }
+header .spacer { flex: 1; }
+.key-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+.key-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--dim);
+  transition: background 0.3s;
+}
+.key-dot.on { background: var(--green); }
+.btn-icon {
+  width: 32px; height: 32px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+  font-size: 16px;
+}
+.btn-icon:hover { border-color: var(--border2); color: var(--text); }
+
+/* ------------------------------------------------------------------ */
+/* Layout                                                               */
+/* ------------------------------------------------------------------ */
+.shell {
+  display: flex;
+  min-height: 100vh;
+  padding-top: 58px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ------------------------------------------------------------------ */
+/* Sidebar                                                              */
+/* ------------------------------------------------------------------ */
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: #ffffff;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 58px);
+  position: sticky;
+  top: 58px;
+  overflow: hidden;
+  transition: width 0.22s ease, min-width 0.22s ease;
+}
+.sidebar.collapsed { width: 0; min-width: 0; border-right: none; }
+.sidebar.collapsed .sidebar-header,
+.sidebar.collapsed .sidebar-list { display: none; }
+.sidebar-new {
+  display: flex; align-items: center; gap: 7px;
+  padding: 10px 14px;
+  cursor: pointer; border: none; background: none; width: 100%;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-new:hover .sidebar-new-circle { background: var(--s3); }
+.sidebar-new-circle {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--s2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 300; color: var(--text);
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+.sidebar-new-label {
+  font-size: 12px; font-weight: 500; color: var(--text);
+}
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-list {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+.sidebar-list::-webkit-scrollbar { width: 3px; }
+.sidebar-list::-webkit-scrollbar-track { background: transparent; }
+.sidebar-list::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 2px; }
+.sidebar-list::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+.sidebar-date-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 14px 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.sidebar-date-group::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.history-card {
+  padding: 9px 14px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: background 0.12s, border-color 0.12s;
+}
+.history-card:hover { background: var(--s2); }
+.history-card.active {
+  background: var(--s2);
+  border-left-color: var(--text);
+}
+.hc-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+.hc-name {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  line-height: 1.3;
+}
+.hc-rerun {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  background: var(--s3);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  flex-shrink: 0;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+}
+.history-card:hover .hc-rerun { display: flex; }
+.hc-rerun:hover { color: var(--text); border-color: var(--text); background: var(--s2); }
+.hc-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.hc-cost { color: var(--green); font-weight: 500; }
+.hc-provider {
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.hc-thumbs { display: flex; gap: 3px; }
+.hc-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  object-fit: cover;
+  background: var(--dim);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.hc-thumb-more {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: var(--s3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.sidebar-empty {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* ------------------------------------------------------------------ */
+/* Main content                                                         */
+/* ------------------------------------------------------------------ */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px 60px;
+  max-width: 900px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Cards                                                                */
+/* ------------------------------------------------------------------ */
+.card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title {
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted);
+}
+.card-body { padding: 18px; }
+
+/* ------------------------------------------------------------------ */
+/* Input card                                                           */
+/* ------------------------------------------------------------------ */
+.nl-textarea {
+  width: 100%;
+  min-height: 120px;
+  background: var(--s3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.nl-textarea:focus { border-color: var(--text); }
+.nl-textarea.parsing { border-color: var(--text); box-shadow: 0 0 0 2px rgba(0,0,0,0.07); }
+.nl-textarea.error { border-color: var(--red); }
+
+.example-chips {
+  display: flex; gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.chip {
+  font-size: 11px; font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--s2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--text); color: var(--text); background: var(--s2); }
+
+.parse-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 12px;
+}
+.parse-hint {
+  font-size: 12px; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.pulse-dots { display: none; }
+.parse-hint.active .pulse-dots { display: inline-flex; gap: 3px; align-items: center; }
+.pulse-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--text);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.pulse-dot:nth-child(2) { animation-delay: 0.2s; }
+.pulse-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%,80%,100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+/* ------------------------------------------------------------------ */
+/* Brief preview card                                                   */
+/* ------------------------------------------------------------------ */
+#briefPreview { display: none; }
+.brief-campaign-row {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 6px;
+}
+.brief-campaign-id {
+  font-size: 15px; font-weight: 700; color: var(--text);
+}
+.brief-meta-tag {
+  font-size: 11px; color: var(--muted);
+  background: var(--s3);
+  padding: 2px 7px; border-radius: 10px;
+}
+.brief-message {
+  font-size: 16px; font-weight: 600;
+  color: var(--text);
+  border-left: 2px solid var(--border2);
+  padding-left: 12px;
+  margin: 10px 0;
+  font-style: italic;
+}
+.brief-section-label {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.brief-brand-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.brand-name { font-size: 13px; font-weight: 600; }
+.color-swatches { display: flex; gap: 5px; }
+.color-swatch {
+  width: 16px; height: 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: inline-block;
+}
+.brief-products { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.product-tag {
+  font-size: 12px;
+  background: var(--s3);
+  border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 4px;
+  display: flex; align-items: center; gap: 6px;
+}
+.product-tag-status {
+  font-size: 10px; color: var(--muted);
+}
+.brief-actions {
+  display: flex; align-items: center; gap: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+/* ------------------------------------------------------------------ */
+/* JSON editor                                                          */
+/* ------------------------------------------------------------------ */
+#jsonSection { display: none; }
+.json-editor-outer {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--s3);
+  position: relative;
+}
+.json-editor-outer.error { border-color: var(--red); }
+.json-toolbar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--s2);
+}
+.json-toolbar-label { font-size: 11px; color: var(--muted); flex: 1; }
+.json-editor-wrap {
+  display: flex;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.65;
+  min-height: 180px;
+  max-height: 400px;
+  overflow: auto;
+}
+.json-line-nums {
+  user-select: none;
+  text-align: right;
+  padding: 10px 8px 10px 12px;
+  color: var(--dim);
+  border-right: 1px solid var(--border);
+  min-width: 40px;
+  white-space: pre;
+  flex-shrink: 0;
+}
+.json-code-layer {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+.json-display {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  padding: 10px 12px;
+  margin: 0;
+  pointer-events: none;
+  white-space: pre;
+  overflow: hidden;
+  color: var(--text);
+  font: inherit;
+}
+.json-textarea {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--text);
+  resize: none;
+  border: none;
+  outline: none;
+  padding: 10px 12px;
+  font: inherit;
+  z-index: 1;
+  spellcheck: false;
+}
+/* syntax colors */
+.jk  { color: var(--accent2); }
+.js  { color: #0f7f4e; }
+.jn  { color: var(--amber); }
+.jb  { color: var(--red); }
+.jx  { color: var(--muted); }
+
+/* ------------------------------------------------------------------ */
+/* Settings row + run button                                            */
+/* ------------------------------------------------------------------ */
+.settings-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.settings-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 18px 11px;
+  flex-wrap: wrap;
+}
+.settings-bottom {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 18px;
+  border-top: 1px solid var(--border);
+}
+.pill-group { display: flex; align-items: center; gap: 6px; }
+.pill-label { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-right: 2px; }
+.pills { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; background: var(--bg); }
+.pill {
+  padding: 4px 11px;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  color: var(--muted);
+  background: var(--bg);
+  border: none;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+.pill:hover { color: var(--text); background: var(--s1); }
+.pill.active { background: var(--s1); color: var(--text); font-weight: 600; }
+
+.biu-group { display: flex; border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; }
+.biu-btn {
+  width: 30px; height: 28px;
+  border: none; border-right: 1px solid var(--border);
+  background: var(--bg); color: var(--muted);
+  cursor: pointer; font-size: 13px; font-family: inherit;
+  transition: background 0.12s, color 0.12s;
+  display: flex; align-items: center; justify-content: center;
+}
+.biu-btn:last-child { border-right: none; }
+#biuB { font-weight: 700; }
+#biuI { font-style: italic; }
+#biuU { text-decoration: underline; }
+.biu-btn:hover { background: var(--s1); color: var(--text); }
+.biu-btn.active { background: var(--s1); color: var(--text); }
+
+.run-group { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.btn-run {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 20px;
+  background: #007aff;
+  color: #fff;
+  border: none; border-radius: var(--radius);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  position: relative;
+}
+.btn-run:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+.btn-run:active:not(:disabled) { transform: translateY(0); }
+.btn-run:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-run .spinner {
+  display: none;
+  width: 13px; height: 13px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.btn-run.running .spinner { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.run-error-inline {
+  font-size: 11px; color: var(--red);
+  display: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Progress card                                                        */
+/* ------------------------------------------------------------------ */
+#progressCard { display: none; }
+.progress-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.progress-meta { display: flex; gap: 16px; align-items: center; }
+.progress-timer, .progress-cost {
+  font-size: 12px; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.progress-cost { color: var(--green); }
+.stage-groups { padding: 14px 18px; display: flex; flex-direction: column; gap: 14px; }
+.stage-group {}
+.stage-group-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 4px;
+}
+.stage-group-icon { font-size: 14px; min-width: 16px; }
+.stage-group-label {
+  font-size: 12px; font-weight: 600; color: var(--muted);
+}
+.stage-rows { padding-left: 24px; display: flex; flex-direction: column; gap: 2px; }
+.stage-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 3px 0;
+  animation: slide-in 0.15s ease both;
+}
+@keyframes slide-in { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+.stage-icon { font-size: 11px; min-width: 14px; color: var(--muted); margin-top: 2px; }
+.stage-icon.done { color: var(--green); }
+.stage-icon.active { color: var(--text); animation: spin 1s linear infinite; display: inline-block; }
+.stage-icon.error { color: var(--red); }
+.stage-name { font-size: 11px; font-weight: 600; color: var(--muted); min-width: 80px; letter-spacing: 0.04em; }
+.stage-msg { font-size: 11px; color: var(--text); flex: 1; line-height: 1.4; }
+.stage-pending .stage-name, .stage-pending .stage-msg { color: var(--dim); }
+.stage-prompt-wrap {
+  padding-left: 104px;
+  padding-bottom: 4px;
+}
+.stage-prompt-toggle {
+  font-size: 10px; color: var(--muted); cursor: pointer;
+  background: none; border: none; padding: 0;
+  display: flex; align-items: center; gap: 4px;
+  transition: color 0.1s;
+}
+.stage-prompt-toggle:hover { color: var(--accent2); }
+.stage-prompt-text {
+  display: none;
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  background: var(--s3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.stage-prompt-text.open { display: block; }
+.progress-log-toggle {
+  padding: 10px 18px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted); cursor: pointer;
+}
+.progress-log {
+  display: none;
+  padding: 0 18px 14px;
+  font-family: monospace; font-size: 10px;
+  color: var(--muted); line-height: 1.6;
+  max-height: 120px; overflow-y: auto;
+}
+.progress-log.open { display: block; }
+
+/* ------------------------------------------------------------------ */
+/* Results card                                                         */
+/* ------------------------------------------------------------------ */
+#resultsCard { display: none; }
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+.metric {
+  padding: 16px 14px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
+.metric:last-child { border-right: none; }
+.metric-value {
+  font-size: 22px; font-weight: 700;
+  line-height: 1; margin-bottom: 4px;
+}
+.metric-label {
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.metric-value.green { color: var(--green); }
+.results-body { padding: 18px; }
+.product-section { margin-bottom: 24px; }
+.product-section-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 12px;
+}
+.product-section-name {
+  font-size: 13px; font-weight: 600;
+  white-space: nowrap;
+}
+.product-section-rule {
+  flex: 1; height: 1px; background: var(--border);
+}
+.format-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.5625fr 1.777fr;
+  gap: 12px;
+}
+.format-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--s2);
+  position: relative;
+  transition: border-color 0.15s;
+}
+.format-card:hover { border-color: var(--border2); }
+.format-label {
+  position: absolute; top: 0; left: 0; right: 0;
+  padding: 5px 8px;
+  font-size: 9px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.07em;
+  color: rgba(255,255,255,0.6);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+  z-index: 2;
+}
+.format-img-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.format-img-wrap.ar-1x1  { aspect-ratio: 1 / 1; }
+.format-img-wrap.ar-9x16 { aspect-ratio: 9 / 16; }
+.format-img-wrap.ar-16x9 { aspect-ratio: 16 / 9; }
+.skeleton-shimmer {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--s3) 0%,
+    rgba(255,255,255,0.8) 40%,
+    var(--s3) 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+@keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+.format-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  position: relative; z-index: 1;
+}
+.format-img.loaded { opacity: 1; }
+.format-caption {
+  padding: 5px 8px;
+  font-size: 9px; color: var(--muted);
+}
+.compliance-badge {
+  position: absolute; top: 6px; right: 6px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,0.3);
+  z-index: 3;
+}
+.compliance-badge.pass { background: var(--green); }
+.compliance-badge.warn { background: var(--amber); }
+.compliance-badge.fail { background: var(--red); }
+.download-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; z-index: 4;
+  transition: opacity 0.15s;
+}
+.format-card:hover .download-overlay { opacity: 1; }
+.download-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-size: 11px; font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+}
+.results-actions {
+  display: flex; gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+}
+
+/* ------------------------------------------------------------------ */
+/* Buttons                                                              */
+/* ------------------------------------------------------------------ */
+.btn {
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--s2);
+  color: var(--text);
+  transition: background 0.12s, border-color 0.12s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn:hover { background: var(--s3); border-color: var(--border2); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-primary { background: var(--text); border-color: var(--text); color: #fff; }
+.btn-primary:hover { background: #333; border-color: #333; }
+.btn-sm { padding: 4px 10px; font-size: 11px; }
+
+/* ------------------------------------------------------------------ */
+/* Settings drawer                                                      */
+/* ------------------------------------------------------------------ */
+.drawer-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+  z-index: 200;
+}
+.drawer-backdrop.open { display: block; }
+.drawer {
+  position: fixed; top: 58px; right: 0; bottom: 0;
+  width: 300px;
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+  z-index: 201;
+  transform: translateX(calc(100% + 1px));
+  transition: transform 0.22s ease;
+  display: flex; flex-direction: column;
+}
+.drawer.open { transform: translateX(0); }
+.drawer-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.drawer-title { font-size: 13px; font-weight: 600; }
+.drawer-body { padding: 14px 16px; flex: 1; overflow-y: auto; }
+.drawer-guide {
+  background: rgba(124,109,255,0.08);
+  border: 1px solid rgba(124,109,255,0.2);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font-size: 12px; color: var(--accent2);
+  margin-bottom: 18px;
+  display: none;
+}
+.drawer-guide.show { display: block; }
+.field-label {
+  font-size: 11px; font-weight: 600;
+  color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.field-hint { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.field-hint a { color: var(--accent2); text-decoration: none; }
+.field-hint a:hover { text-decoration: underline; }
+.key-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--s3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 13px; font-family: monospace;
+  outline: none;
+  margin-bottom: 14px;
+  transition: border-color 0.15s;
+}
+.key-input:focus { border-color: var(--text); }
+.key-disclaimer {
+  font-size: 10px; color: var(--muted);
+  line-height: 1.5; margin-top: 14px;
+  padding: 10px 12px;
+  background: var(--s2);
+  border-radius: var(--radius);
+}
+
+/* ------------------------------------------------------------------ */
+/* Toast                                                                */
+/* ------------------------------------------------------------------ */
+.toast {
+  position: fixed; top: 68px; right: 16px;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  font-size: 12px; font-weight: 500;
+  z-index: 300;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  max-width: 300px;
+}
+.toast.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.toast.success { border-color: rgba(10,158,120,0.35); }
+.toast.error { border-color: rgba(214,48,64,0.35); color: var(--red); }
+
+/* ------------------------------------------------------------------ */
+/* Utility                                                              */
+/* ------------------------------------------------------------------ */
+.fade-in { animation: fadeIn 0.3s ease both; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.hidden { display: none !important; }
+
+#parseBtn, #runBtn, #saveKeysBtn { border-radius: 100px; }
+</style>
+</head>
+<body>
+
+<!-- Top progress bar -->
+<div id="topbar"><div id="topbar-fill"></div></div>
+
+<!-- Header -->
+<header>
+  <button class="btn-icon" id="sidebarToggle" title="Toggle sidebar" style="flex-shrink:0">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+      <rect x="1.5" y="1.5" width="13" height="13" rx="2"/>
+      <line x1="5.5" y1="1.5" x2="5.5" y2="14.5"/>
+    </svg>
+  </button>
+  <div class="logo">CREATIVE <span>[pipeline]</span></div>
+  <div class="spacer"></div>
+  <div class="key-badge"><div class="key-dot" id="dotBfl"></div>BFL</div>
+  <div class="key-badge"><div class="key-dot" id="dotOpenai"></div>OpenAI</div>
+<button class="btn-icon" id="settingsBtn" title="API Keys (Ctrl+,)" style="width:auto;padding:0 10px;font-size:11px;font-weight:700;letter-spacing:0.06em">API</button>
+</header>
+
+<!-- Shell -->
+<div class="shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <button class="sidebar-new" id="newSessionBtn" title="New session">
+      <div class="sidebar-new-circle">+</div>
+      <span class="sidebar-new-label">New Pipeline</span>
+    </button>
+    <div class="sidebar-header">
+      <span id="sidebarLabel">History</span>
+    </div>
+    <div class="sidebar-list" id="historyList">
+      <div class="sidebar-empty">No campaigns yet &mdash;<br>run the pipeline to start.</div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Input card -->
+    <div class="card" id="inputCard">
+      <div class="card-header">
+        <span class="card-title">Campaign Brief</span>
+      </div>
+      <div class="card-body">
+        <textarea class="nl-textarea" id="nlTextarea"
+          placeholder="Describe your campaign in plain language. Include brand, products, audience, tone, and market..."></textarea>
+        <div class="example-chips">
+          <div class="chip" data-example="viva">Viva Summer Launch</div>
+          <div class="chip" data-example="tech">Tech Product Launch</div>
+          <div class="chip" data-example="wellness">Wellness Brand</div>
+          <div class="chip" data-example="maison">Maison Arc Fashion</div>
+          <div class="chip" data-example="onyx">Onyx Coffee</div>
+        </div>
+        <div class="parse-row">
+          <button class="btn btn-primary" id="parseBtn">Parse Brief <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><polyline points="3.5,2 7.5,5.5 3.5,9"/></svg></button>
+          <div class="parse-hint" id="parseHint">
+            <span class="pulse-dots">
+              <span class="pulse-dot"></span>
+              <span class="pulse-dot"></span>
+              <span class="pulse-dot"></span>
+            </span>
+            <span id="parseHintText"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Brief preview card -->
+    <div class="card fade-in" id="briefPreview">
+      <div class="card-header">
+        <span class="card-title">Brief Preview</span>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm" id="exportJsonBtn">Export .json</button>
+          <button class="btn btn-sm" id="toggleJsonBtn">View / Edit JSON &#9660;</button>
+        </div>
+      </div>
+      <div class="card-body" id="briefPreviewBody"></div>
+    </div>
+
+    <!-- JSON editor section -->
+    <div class="card" id="jsonSection">
+      <div class="json-editor-outer" id="jsonEditorOuter">
+        <div class="json-toolbar">
+          <span class="json-toolbar-label">Brief JSON</span>
+          <button class="btn btn-sm" id="jsonFormatBtn">Format</button>
+          <button class="btn btn-sm" id="jsonCopyBtn">Copy</button>
+          <button class="btn btn-sm" id="jsonFullscreenBtn">&#10021;</button>
+        </div>
+        <div class="json-editor-wrap" id="jsonEditorWrap">
+          <div class="json-line-nums" id="jsonLineNums">1</div>
+          <div class="json-code-layer">
+            <pre class="json-display" id="jsonDisplay"></pre>
+            <textarea class="json-textarea" id="jsonTextarea"
+              spellcheck="false" autocomplete="off" autocorrect="off"
+              placeholder="Parse a brief or load from history to populate this editor."></textarea>
+          </div>
+        </div>
+      </div>
+      <div id="jsonErrorMsg" style="font-size:11px;color:var(--red);padding:6px 12px;display:none"></div>
+      <div style="padding:8px 12px;">
+        <label class="btn btn-sm" style="cursor:pointer">
+          Load JSON file
+          <input type="file" accept=".json" id="jsonFileInput" style="display:none">
+        </label>
+      </div>
+    </div>
+
+    <!-- Settings row + run button -->
+    <div class="card settings-row" id="settingsRow">
+      <div class="settings-top">
+        <div class="pill-group">
+          <span class="pill-label">Color</span>
+          <div class="pills" id="pillText">
+            <button class="pill active" data-val="white">White</button>
+            <button class="pill" data-val="black">Black</button>
+          </div>
+        </div>
+        <div class="pill-group">
+          <span class="pill-label">Font</span>
+          <div class="pills" id="pillFont">
+            <button class="pill active" data-val="sans">Sans</button>
+            <button class="pill" data-val="serif">Serif</button>
+            <button class="pill" data-val="mono">Mono</button>
+          </div>
+        </div>
+        <div class="pill-group">
+          <span class="pill-label">Style</span>
+          <div class="biu-group">
+            <button class="biu-btn active" id="biuB" title="Bold">B</button>
+            <button class="biu-btn" id="biuI" title="Italic">I</button>
+            <button class="biu-btn" id="biuU" title="Underline">U</button>
+          </div>
+        </div>
+        <div class="pill-group">
+          <span class="pill-label">Size</span>
+          <div class="pills" id="pillSize">
+            <button class="pill" data-val="52">S</button>
+            <button class="pill active" data-val="72">M</button>
+            <button class="pill" data-val="96">L</button>
+          </div>
+        </div>
+      </div>
+      <div class="settings-bottom">
+        <div class="pill-group">
+          <span class="pill-label">Model</span>
+          <div class="pills" id="pillProvider">
+            <button class="pill active" data-val="flux">Flux 1.1 Pro</button>
+            <button class="pill" data-val="gpt-image-1">GPT Image 1</button>
+          </div>
+        </div>
+        <div class="run-group">
+          <div class="run-error-inline" id="runErrorInline"></div>
+          <button class="btn-run" id="runBtn" disabled title="Run Pipeline (Ctrl+Enter)">
+            <div class="spinner"></div>
+            <span id="runBtnLabel">Run Pipeline</span>
+            <svg id="runChevron" width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3.5,2 7.5,5.5 3.5,9"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress card -->
+    <div class="card fade-in" id="progressCard">
+      <div class="progress-header">
+        <span class="card-title">Pipeline Progress</span>
+        <div class="progress-meta">
+          <span class="progress-timer" id="progressTimer">0.0s elapsed</span>
+          <span class="progress-cost" id="progressCost" style="display:none"></span>
+        </div>
+      </div>
+      <div class="stage-groups" id="stageGroups"></div>
+      <div class="progress-log-toggle" id="logToggle">Show log &#9660;</div>
+      <div class="progress-log" id="progressLog"></div>
+    </div>
+
+    <!-- Results card -->
+    <div class="card fade-in" id="resultsCard">
+      <div class="metrics-row" id="metricsRow"></div>
+      <div class="results-body" id="resultsBody"></div>
+      <div class="results-actions">
+        <a href="/report" target="_blank" class="btn">View HTML Report</a>
+        <button class="btn" id="downloadAllBtn" disabled>Download All</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Settings drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<div class="drawer" id="settingsDrawer">
+  <div class="drawer-header">
+    <span class="drawer-title">Settings</span>
+    <button class="btn-icon" id="closeDrawerBtn">&#10005;</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-guide" id="drawerGuide">
+      Add your API keys to get started. Keys are stored in <code>.env</code> on your machine.
+    </div>
+    <div class="field-label">
+      <span class="key-dot" id="drawerDotOpenai"></span>OpenAI API Key
+    </div>
+    <div class="field-hint">Get your key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></div>
+    <input type="password" class="key-input" id="keyOpenai" placeholder="sk-..." autocomplete="off">
+    <div class="field-label" style="margin-top:14px">
+      <span class="key-dot" id="drawerDotBfl"></span>BFL API Key
+    </div>
+    <div class="field-hint">Image generation via Flux 1.1 Pro &mdash; get your key at <a href="https://docs.bfl.ai/" target="_blank">docs.bfl.ai</a></div>
+    <input type="password" class="key-input" id="keyBfl" placeholder="sk-..." autocomplete="off">
+    <button class="btn btn-primary" id="saveKeysBtn" style="border-radius:100px">Save Keys</button>
+    <div class="key-disclaimer">
+      Keys are stored in <code>.env</code> on your machine and sent only to the provider APIs.
+      They are never logged, committed to git, or transmitted elsewhere.
+      After saving, fields clear for security.
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ------------------------------------------------------------------ */
+/* Constants                                                            */
+/* ------------------------------------------------------------------ */
+const FORMATS = [
+  { name: '1x1',  label: 'Instagram Feed (1:1)',      ar: 'ar-1x1',  dim: '1080 x 1080', col: 1 },
+  { name: '9x16', label: 'Stories / Reels (9:16)',    ar: 'ar-9x16', dim: '1080 x 1920', col: 1 },
+  { name: '16x9', label: 'Facebook / YouTube (16:9)', ar: 'ar-16x9', dim: '1920 x 1080', col: 1 },
+];
+
+const EXAMPLES = {
+  viva: {"campaign_id":"viva_summer","region":"US","language":"en","target_audience":"health-conscious adults 25-40","campaign_message":"Long Live Summer.","brand":{"name":"Viva","logo_path":"assets/viva_logo.png","colors":["#2ECC71","#FFFFFF","#1A1A2E"]},"products":[{"id":"viva_sparkling_water","name":"Viva Sparkling Water","description":"Premium sparkling water in a sleek dark green glass bottle with a simple label that reads Viva, bottle centered in frame, symmetrical composition, a glass of sparkling water with a single lime wedge perched on the rim of the glass beside the bottle, outdoor Mediterranean setting, deep blue sea filling the background, bright natural summer light, condensation on glass, coastal lifestyle, professional beverage photography","asset_path":null},{"id":"viva_energy_bar","name":"Viva Energy Bar","description":"Natural energy bar with visible oats and dark chocolate chips on a rustic wooden surface, warm morning light, health and vitality","asset_path":null}]},
+  tech: {"campaign_id":"techflow_pro_launch","region":"EU","language":"en","target_audience":"remote workers and developers","campaign_message":"Work Without Limits.","brand":{"name":"TechFlow","logo_path":null,"colors":["#1A1A2E","#FFFFFF","#4A90D9"]},"products":[{"id":"techflow_pro_14","name":"TechFlow Pro 14","description":"Sleek premium laptop with dark navy and brushed silver finish, open screen emitting a soft blue glow, placed on a minimalist desk with clean lines, dramatic side lighting, professional technology product photography","asset_path":null},{"id":"techflow_wireless_hub","name":"TechFlow Wireless Hub","description":"Compact wireless hub with multiple ports in a dark navy matte finish, arranged on a clean white surface with subtle cable connections fanning out, top-down product shot, professional technology product photography","asset_path":null}]},
+  wellness: {"campaign_id":"lumina_wellness","region":"US","language":"en","target_audience":"millennial women 28-40","campaign_message":"Glow From Within.","brand":{"name":"Lumina","logo_path":null,"colors":["#C9A84C","#FFFFF0","#F5ECD7"]},"products":[{"id":"lumina_vitality_serum","name":"Lumina Vitality Serum","description":"Elegant glass serum bottle with a gold dropper top, soft ivory background, warm golden morning light casting a gentle glow, fresh botanical leaves and petals arranged nearby, luxury skincare aesthetic, clean beauty product photography","asset_path":null},{"id":"lumina_daily_glow_moisturizer","name":"Lumina Daily Glow Moisturizer","description":"Minimalist cream jar with a soft gold lid on an ivory marble surface, delicate flower petals and a sprig of greenery nearby, diffused natural window light, warm and luminous, luxury skincare product photography","asset_path":null}]},
+  maison: {"campaign_id":"maison_arc_seasonal","region":"US","language":"en","target_audience":"style-conscious urban professionals 25-35","campaign_message":"Wear the Season.","brand":{"name":"Maison Arc","logo_path":null,"colors":["#722F37","#F5F0E8","#2C2C2C"]},"products":[{"id":"arc_structured_blazer","name":"Arc Structured Blazer","description":"Impeccably structured contemporary blazer in deep burgundy, displayed on a clean form against a warm cream background, architectural fashion photography with dramatic shadow, editorial fashion aesthetic","asset_path":null},{"id":"arc_minimal_sneaker","name":"Arc Minimal Sneaker","description":"Clean minimal sneaker in warm cream leather with deep burgundy accent stitching and sole, studio product photography on a white surface, side profile shot, contemporary fashion editorial aesthetic","asset_path":null}]},
+  onyx: {"campaign_id":"onyx_brand_campaign","region":"US","language":"en","target_audience":"urban professionals and remote workers 22-40","campaign_message":"Slow Down, Wake Up.","brand":{"name":"Onyx Coffee Co.","logo_path":null,"colors":["#1A1A1A","#C68B2F","#FFFFFF"]},"products":[{"id":"onyx_cold_brew_concentrate","name":"Onyx Cold Brew Concentrate","description":"Dark matte glass bottle of cold brew concentrate with a near-black label and warm amber typography, ice cubes and roasted coffee beans scattered on a weathered oak surface, moody low morning light, specialty coffee product photography","asset_path":null},{"id":"onyx_oat_latte","name":"Onyx Oat Latte","description":"Perfectly layered oat latte in a clear glass, rich dark cold brew beneath a smooth pour of creamy oat milk, warm amber tones, minimalist coffee shop surface, slight angle shot, artisan coffee product photography","asset_path":null}]},
+};
+
+const STAGE_VALIDATION = ['INIT', 'BRIEF', 'LEGAL'];
+const STAGE_PER_PRODUCT = ['RESOLVE', 'GENERATE', 'RENDER', 'SAVE', 'COMPLIANCE'];
+const STAGE_OUTPUT = ['SUMMARY', 'REPORT'];
+
+/* ------------------------------------------------------------------ */
+/* State                                                                */
+/* ------------------------------------------------------------------ */
+const S = {
+  brief: null,
+  running: false,
+  keys: { bfl: false, openai: false },
+  nlParseUsed: false,
+  startTime: null,
+  elapsedInterval: null,
+  generatedCount: 0,
+  costEstimate: 0,
+  stageState: {},      // { groupKey: { rows: [], status } }
+  activeProduct: null, // current product being processed
+  promptByProduct: {}, // product_id -> prompt text
+  complianceByProduct: {}, // product_id -> compliance result
+  prefs: { provider: 'flux', textColor: 'white', fontStyle: 'sans', fontBold: 'true', fontItalic: 'false', fontUnderline: 'false', fontSize: '72' },
+  history: [],
+  lastRunOutputs: {},  // product_id -> [format, ...]
+  lastRunSummary: {},
+  isFirstRun: false,
+};
+
+/* ------------------------------------------------------------------ */
+/* Init                                                                 */
+/* ------------------------------------------------------------------ */
+async function init() {
+  loadPrefs();
+  applyPrefs();
+  await checkKeys();
+  await loadHistory();
+
+  if (!S.keys.bfl && !S.keys.openai) {
+    S.isFirstRun = true;
+    openDrawer(true);
+  }
+
+  // Restore last brief (skipped if user started a new session)
+  const saved = localStorage.getItem('cp_last_brief');
+  if (saved && saved !== 'new') {
+    try {
+      const b = JSON.parse(saved);
+      S.brief = b;
+      renderJsonEditor(b);
+      showBriefPreview(b);
+      document.getElementById('jsonSection').style.display = 'block';
+      document.getElementById('briefPreview').style.display = 'block';
+      document.getElementById('runBtn').disabled = false;
+    } catch (_) {}
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* API key check                                                        */
+/* ------------------------------------------------------------------ */
+async function checkKeys() {
+  try {
+    const r = await fetch('/api/keys/status');
+    const d = await r.json();
+    S.keys = d;
+    updateKeyDots();
+  } catch (_) {}
+}
+
+function updateKeyDots() {
+  document.getElementById('dotBfl').className = 'key-dot' + (S.keys.bfl ? ' on' : '');
+  document.getElementById('dotOpenai').className = 'key-dot' + (S.keys.openai ? ' on' : '');
+  document.getElementById('drawerDotBfl').className = 'key-dot' + (S.keys.bfl ? ' on' : '');
+  document.getElementById('drawerDotOpenai').className = 'key-dot' + (S.keys.openai ? ' on' : '');
+}
+
+/* ------------------------------------------------------------------ */
+/* Settings drawer                                                      */
+/* ------------------------------------------------------------------ */
+function openDrawer(showGuide = false) {
+  document.getElementById('settingsDrawer').classList.add('open');
+  document.getElementById('drawerBackdrop').classList.add('open');
+  document.getElementById('drawerGuide').classList.toggle('show', showGuide);
+}
+
+function closeDrawer() {
+  document.getElementById('settingsDrawer').classList.remove('open');
+  document.getElementById('drawerBackdrop').classList.remove('open');
+}
+
+document.getElementById('settingsBtn').addEventListener('click', () => openDrawer());
+document.getElementById('newSessionBtn').addEventListener('click', resetSession);
+document.getElementById('closeDrawerBtn').addEventListener('click', closeDrawer);
+document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
+
+document.getElementById('saveKeysBtn').addEventListener('click', async () => {
+  const bfl = document.getElementById('keyBfl').value.trim();
+  const openai = document.getElementById('keyOpenai').value.trim();
+  if (!bfl && !openai) { toast('Enter at least one key to save.', 'error'); return; }
+  try {
+    await fetch('/api/keys', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bfl_api_key: bfl, openai_api_key: openai }),
+    });
+    document.getElementById('keyBfl').value = '';
+    document.getElementById('keyOpenai').value = '';
+    await checkKeys();
+    toast('Keys saved successfully.', 'success');
+    if (S.isFirstRun) { closeDrawer(); S.isFirstRun = false; }
+  } catch (_) {
+    toast('Failed to save keys.', 'error');
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/* Example chips                                                        */
+/* ------------------------------------------------------------------ */
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const key = chip.dataset.example;
+    const brief = EXAMPLES[key];
+    if (!brief) return;
+    S.brief = brief;
+    S.nlParseUsed = false;
+    localStorage.setItem('cp_last_brief', JSON.stringify(brief));
+    renderJsonEditor(brief);
+    showBriefPreview(brief);
+    document.getElementById('briefPreview').style.display = 'block';
+    document.getElementById('jsonSection').style.display = 'block';
+    document.getElementById('toggleJsonBtn').innerHTML = 'Hide JSON &#9650;';
+    document.getElementById('runBtn').disabled = false;
+    toast('Brief loaded.', 'success');
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Brief parse                                                          */
+/* ------------------------------------------------------------------ */
+document.getElementById('parseBtn').addEventListener('click', parseBrief);
+
+async function parseBrief() {
+  const text = document.getElementById('nlTextarea').value.trim();
+  if (!text) return;
+  const ta = document.getElementById('nlTextarea');
+  const hint = document.getElementById('parseHint');
+  const hintText = document.getElementById('parseHintText');
+
+  ta.classList.add('parsing');
+  hint.classList.add('active');
+  hintText.textContent = 'Parsing with GPT-4o...';
+  document.getElementById('parseBtn').disabled = true;
+  topbarStart(true);
+
+  try {
+    const r = await fetch('/api/brief/parse', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Parse failed');
+    ta.classList.remove('parsing', 'error');
+    S.brief = data;
+    S.nlParseUsed = true;
+    localStorage.setItem('cp_last_brief', JSON.stringify(data));
+    renderJsonEditor(data);
+    showBriefPreview(data);
+    document.getElementById('briefPreview').style.display = 'block';
+    document.getElementById('jsonSection').style.display = 'block';
+    document.getElementById('toggleJsonBtn').innerHTML = 'Hide JSON &#9650;';
+    document.getElementById('runBtn').disabled = false;
+    toast('Brief parsed successfully.', 'success');
+  } catch (err) {
+    ta.classList.add('error');
+    hintText.textContent = 'Parse failed — ' + err.message;
+  } finally {
+    ta.classList.remove('parsing');
+    hint.classList.remove('active');
+    document.getElementById('parseBtn').disabled = false;
+    topbarStop();
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Brief preview card                                                   */
+/* ------------------------------------------------------------------ */
+function showBriefPreview(brief) {
+  const body = document.getElementById('briefPreviewBody');
+  const brand = brief.brand || {};
+  const colors = brand.colors || [];
+  const products = brief.products || [];
+
+  const swatchHtml = colors.map(c => {
+    const col = c.startsWith('#') ? c : '#' + c;
+    return '<span class="color-swatch" style="background:' + escHtml(col) + '" title="' + escHtml(col) + '"></span>';
+  }).join('');
+
+  const productsHtml = products.map(p => {
+    const status = p.asset_path ? p.asset_path : 'auto-generate';
+    return '<div class="product-tag"><span>' + escHtml(p.name || p.id) + '</span><span class="product-tag-status">' + escHtml(status) + '</span></div>';
+  }).join('');
+
+  body.innerHTML = `
+    <div class="brief-campaign-row">
+      <span class="brief-campaign-id">${escHtml(brief.campaign_id || 'untitled')}</span>
+      <span class="brief-meta-tag">${escHtml(brief.region || 'US')}</span>
+      <span class="brief-meta-tag">${escHtml(brief.language || 'en')}</span>
+    </div>
+    <div class="brief-message">${escHtml(brief.campaign_message || brief.message || '')}</div>
+    <div class="brief-section-label">Brand</div>
+    <div class="brief-brand-row">
+      <span class="brand-name">${escHtml(brand.name || '')}</span>
+      <div class="color-swatches">${swatchHtml}</div>
+    </div>
+    <div class="brief-section-label">Products</div>
+    <div class="brief-products">${productsHtml}</div>
+  `;
+}
+
+document.getElementById('toggleJsonBtn').addEventListener('click', () => {
+  const sec = document.getElementById('jsonSection');
+  const btn = document.getElementById('toggleJsonBtn');
+  if (sec.style.display === 'none' || !sec.style.display) {
+    sec.style.display = 'block';
+    btn.innerHTML = 'Hide JSON &#9650;';
+  } else {
+    sec.style.display = 'none';
+    btn.innerHTML = 'View / Edit JSON &#9660;';
+  }
+});
+
+document.getElementById('exportJsonBtn').addEventListener('click', () => {
+  if (!S.brief) return;
+  const blob = new Blob([JSON.stringify(S.brief, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (S.brief.campaign_id || 'brief') + '.json';
+  a.click();
+});
+
+/* ------------------------------------------------------------------ */
+/* JSON editor                                                          */
+/* ------------------------------------------------------------------ */
+const jsonTa = document.getElementById('jsonTextarea');
+const jsonDisp = document.getElementById('jsonDisplay');
+const jsonLns = document.getElementById('jsonLineNums');
+
+function syntaxColor(str) {
+  str = str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return str.replace(
+    /("(?:\\u[0-9a-fA-F]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+    m => {
+      if (/^"/.test(m)) {
+        return /:$/.test(m)
+          ? '<span class="jk">' + m + '</span>'
+          : '<span class="js">' + m + '</span>';
+      }
+      if (/true|false/.test(m)) return '<span class="jb">' + m + '</span>';
+      if (/null/.test(m))       return '<span class="jx">' + m + '</span>';
+      return '<span class="jn">' + m + '</span>';
+    }
+  );
+}
+
+function updateJsonEditor() {
+  const val = jsonTa.value;
+  jsonDisp.innerHTML = syntaxColor(val);
+  const n = (val.split('\n').length);
+  jsonLns.textContent = Array.from({ length: n }, (_, i) => i + 1).join('\n');
+  // Validate
+  const errEl = document.getElementById('jsonErrorMsg');
+  const outer = document.getElementById('jsonEditorOuter');
+  if (!val.trim()) { errEl.style.display = 'none'; outer.classList.remove('error'); return; }
+  try {
+    S.brief = JSON.parse(val);
+    localStorage.setItem('cp_last_brief', val);
+    document.getElementById('runBtn').disabled = false;
+    errEl.style.display = 'none';
+    outer.classList.remove('error');
+  } catch (e) {
+    outer.classList.add('error');
+    errEl.style.display = 'block';
+    errEl.textContent = 'Invalid JSON: ' + e.message;
+    document.getElementById('runBtn').disabled = true;
+  }
+}
+
+function renderJsonEditor(brief) {
+  jsonTa.value = JSON.stringify(brief, null, 2);
+  updateJsonEditor();
+}
+
+jsonTa.addEventListener('input', updateJsonEditor);
+jsonTa.addEventListener('scroll', () => {
+  jsonDisp.scrollTop = jsonTa.scrollTop;
+  jsonDisp.scrollLeft = jsonTa.scrollLeft;
+});
+
+document.getElementById('jsonFormatBtn').addEventListener('click', () => {
+  try {
+    const parsed = JSON.parse(jsonTa.value);
+    jsonTa.value = JSON.stringify(parsed, null, 2);
+    updateJsonEditor();
+  } catch (_) {}
+});
+
+document.getElementById('jsonCopyBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText(jsonTa.value).then(() => {
+    const btn = document.getElementById('jsonCopyBtn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+  });
+});
+
+document.getElementById('jsonFullscreenBtn').addEventListener('click', () => {
+  const wrap = document.getElementById('jsonEditorWrap');
+  if (wrap.style.maxHeight === 'none') {
+    wrap.style.maxHeight = '';
+    document.getElementById('jsonFullscreenBtn').innerHTML = '&#10021;';
+  } else {
+    wrap.style.maxHeight = 'none';
+    document.getElementById('jsonFullscreenBtn').innerHTML = '&#10022;';
+  }
+});
+
+document.getElementById('jsonFileInput').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      S.brief = parsed;
+      S.nlParseUsed = false;
+      renderJsonEditor(parsed);
+      showBriefPreview(parsed);
+      document.getElementById('briefPreview').style.display = 'block';
+      document.getElementById('jsonSection').style.display = 'block';
+      document.getElementById('runBtn').disabled = false;
+    } catch (_) {
+      toast('Invalid JSON file.', 'error');
+    }
+  };
+  reader.readAsText(f);
+});
+
+/* ------------------------------------------------------------------ */
+/* Pill toggles                                                         */
+/* ------------------------------------------------------------------ */
+function initPills(id, prefKey) {
+  const group = document.getElementById(id);
+  group.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      group.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      S.prefs[prefKey] = pill.dataset.val;
+      savePrefs();
+    });
+  });
+}
+
+initPills('pillProvider', 'provider');
+initPills('pillText', 'textColor');
+initPills('pillFont', 'fontStyle');
+initPills('pillSize', 'fontSize');
+
+// B/I/U are independent toggles, not a mutually exclusive pill group
+function initBIU() {
+  [['biuB','fontBold'],['biuI','fontItalic'],['biuU','fontUnderline']].forEach(([id, pref]) => {
+    document.getElementById(id).addEventListener('click', function() {
+      const on = this.classList.toggle('active');
+      S.prefs[pref] = on ? 'true' : 'false';
+      savePrefs();
+    });
+  });
+}
+initBIU();
+
+function applyPrefs() {
+  const p = S.prefs;
+  setActivePill('pillProvider', p.provider);
+  setActivePill('pillText', p.textColor);
+  setActivePill('pillFont', p.fontStyle);
+  document.getElementById('biuB').classList.toggle('active', p.fontBold !== 'false');
+  document.getElementById('biuI').classList.toggle('active', p.fontItalic === 'true');
+  document.getElementById('biuU').classList.toggle('active', p.fontUnderline === 'true');
+  setActivePill('pillSize', p.fontSize);
+}
+
+function setActivePill(groupId, val) {
+  const group = document.getElementById(groupId);
+  group.querySelectorAll('.pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.val === val);
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Pipeline run                                                         */
+/* ------------------------------------------------------------------ */
+document.getElementById('runBtn').addEventListener('click', runPipeline);
+document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
+
+/* ------------------------------------------------------------------ */
+/* New session                                                          */
+/* ------------------------------------------------------------------ */
+function resetSession() {
+  if (S.running) return;
+  S.brief = null;
+  S.nlParseUsed = false;
+  S.lastRunOutputs = {};
+  S.lastRunSummary = {};
+  const ta = document.getElementById('nlTextarea');
+  ta.value = '';
+  localStorage.setItem('cp_last_brief', 'new');
+  jsonTa.value = '';
+  updateJsonEditor();
+  document.getElementById('briefPreview').style.display = 'none';
+  document.getElementById('briefPreviewBody').innerHTML = '';
+  document.getElementById('jsonSection').style.display = 'none';
+  const outer = document.getElementById('jsonEditorOuter');
+  if (outer) outer.style.display = 'none';
+  document.getElementById('progressCard').style.display = 'none';
+  document.getElementById('resultsCard').style.display = 'none';
+  document.getElementById('stageGroups').innerHTML = '';
+  document.getElementById('progressLog').textContent = '';
+  document.getElementById('runBtn').disabled = true;
+  document.getElementById('downloadAllBtn').disabled = true;
+  document.getElementById('runErrorInline').textContent = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  ta.focus();
+}
+
+/* ------------------------------------------------------------------ */
+/* Download all as ZIP                                                  */
+/* ------------------------------------------------------------------ */
+async function downloadAll() {
+  const paths = [];
+  const campaignId = S.lastRunSummary.campaign_id || 'campaign';
+  Object.entries(S.lastRunOutputs).forEach(([pid, formats]) => {
+    (formats.length ? formats : ['1x1','9x16','16x9']).forEach(fmt => {
+      const name = typeof fmt === 'string' ? fmt : fmt.name;
+      paths.push(pid + '/' + name + '.png');
+    });
+  });
+  // Fallback: collect from rendered img srcs
+  if (!paths.length) {
+    document.querySelectorAll('.format-img').forEach(img => {
+      if (img.src && img.src.includes('/outputs/')) {
+        const rel = img.src.replace(/.*\/outputs\//, '');
+        if (rel) paths.push(rel);
+      }
+    });
+  }
+  if (!paths.length) { showToast('No images to download', 'error'); return; }
+  try {
+    const resp = await fetch('/api/download-zip', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paths, campaign_id: campaignId }),
+    });
+    if (!resp.ok) throw new Error('Server error');
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = campaignId + '.zip';
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    showToast('Download failed: ' + err.message, 'error');
+  }
+}
+
+async function runPipeline() {
+  if (S.running || !S.brief) return;
+  S.running = true;
+  S.generatedCount = 0;
+  S.costEstimate = 0;
+  S.promptByProduct = {};
+  S.complianceByProduct = {};
+  S.lastRunOutputs = {};
+  S.activeProduct = null;
+
+  const runBtn = document.getElementById('runBtn');
+  const runLabel = document.getElementById('runBtnLabel');
+  runBtn.disabled = true;
+  runBtn.classList.add('running');
+  runLabel.textContent = 'Running...';
+  document.getElementById('runErrorInline').style.display = 'none';
+
+  topbarStart(false);
+  startElapsedTimer();
+
+  // Show and reset progress card
+  const progressCard = document.getElementById('progressCard');
+  progressCard.style.display = 'block';
+  document.getElementById('stageGroups').innerHTML = '';
+  document.getElementById('progressLog').textContent = '';
+  document.getElementById('progressLog').classList.remove('open');
+
+  // Hide previous results
+  document.getElementById('resultsCard').style.display = 'none';
+
+  const brief = Object.assign({}, S.brief, {
+    text_color: S.prefs.textColor,
+    font_style: S.prefs.fontStyle,
+    font_bold: S.prefs.fontBold !== 'false',
+    font_italic: S.prefs.fontItalic === 'true',
+    font_underline: S.prefs.fontUnderline === 'true',
+    font_size: parseInt(S.prefs.fontSize, 10) || 52,
+  });
+
+  try {
+    const resp = await fetch('/api/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        brief,
+        provider: S.prefs.provider,
+        nl_parse_used: S.nlParseUsed,
+      }),
+    });
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const ev = JSON.parse(line.slice(6));
+            handleSSEEvent(ev);
+          } catch (_) {}
+        }
+      }
+    }
+  } catch (err) {
+    onRunError('Connection error: ' + err.message);
+  }
+}
+
+function handleSSEEvent(ev) {
+  switch (ev.type) {
+    case 'pipeline_plan':   onPipelinePlan(ev); break;
+    case 'progress':        onProgress(ev);     break;
+    case 'prompt':          onPrompt(ev);       break;
+    case 'images_ready':    onImagesReady(ev);  break;
+    case 'complete':        onComplete(ev);     break;
+    case 'error':           onRunError(ev.message); break;
+  }
+  // Always append to raw log
+  const log = document.getElementById('progressLog');
+  log.textContent += JSON.stringify(ev) + '\n';
+  log.scrollTop = log.scrollHeight;
+}
+
+/* ------------------------------------------------------------------ */
+/* Pipeline plan -- pre-render stage skeleton                           */
+/* ------------------------------------------------------------------ */
+function onPipelinePlan(ev) {
+  const products = ev.products || [];
+  const container = document.getElementById('stageGroups');
+  container.innerHTML = '';
+
+  // Validation group
+  container.appendChild(makeGroupEl('validation', 'Validation', STAGE_VALIDATION, null));
+
+  // Per-product groups
+  products.forEach(pid => {
+    const label = pid.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    container.appendChild(makeGroupEl('product_' + pid, label, STAGE_PER_PRODUCT, pid));
+  });
+
+  // Output group
+  container.appendChild(makeGroupEl('output', 'Output', STAGE_OUTPUT, null));
+
+  // Show results skeleton
+  buildResultsSkeleton(products);
+}
+
+function makeGroupEl(key, label, stages, productId) {
+  const div = document.createElement('div');
+  div.className = 'stage-group';
+  div.id = 'grp_' + key;
+  div.innerHTML = `
+    <div class="stage-group-header">
+      <span class="stage-group-icon" id="grpIcon_${key}">&#183;</span>
+      <span class="stage-group-label">${escHtml(label)}</span>
+    </div>
+    <div class="stage-rows" id="rows_${key}"></div>
+  `;
+  const rowsEl = div.querySelector('.stage-rows');
+  stages.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'stage-row stage-pending';
+    row.id = 'row_' + key + '_' + s;
+    row.innerHTML = `
+      <span class="stage-icon" id="icon_${key}_${s}">&#183;</span>
+      <span class="stage-name">${escHtml(s)}</span>
+      <span class="stage-msg" id="msg_${key}_${s}">pending</span>
+    `;
+    rowsEl.appendChild(row);
+  });
+  return div;
+}
+
+/* ------------------------------------------------------------------ */
+/* Progress events                                                      */
+/* ------------------------------------------------------------------ */
+const STAGE_TO_GROUP = {
+  INIT: 'validation', BRIEF: 'validation', LEGAL: 'validation',
+  SUMMARY: 'output', REPORT: 'output',
+};
+
+function onProgress(ev) {
+  const { stage, message } = ev;
+  let groupKey;
+
+  if (stage === 'PRODUCT') {
+    const pid = message.replace('Processing: ', '').trim();
+    S.activeProduct = pid;
+    return;
+  }
+
+  if (STAGE_TO_GROUP[stage]) {
+    groupKey = STAGE_TO_GROUP[stage];
+  } else if (S.activeProduct) {
+    groupKey = 'product_' + S.activeProduct;
+  } else {
+    return;
+  }
+
+  const rowId = 'row_' + groupKey + '_' + stage;
+  const iconId = 'icon_' + groupKey + '_' + stage;
+  const msgId  = 'msg_'  + groupKey + '_' + stage;
+
+  // Mark previous rows in group as done
+  const rowsEl = document.getElementById('rows_' + groupKey);
+  if (rowsEl) {
+    rowsEl.querySelectorAll('.stage-row:not(.stage-pending)').forEach(r => {
+      const ic = r.querySelector('.stage-icon');
+      if (ic && ic.classList.contains('active')) {
+        ic.className = 'stage-icon done';
+        ic.innerHTML = '&#10003;';
+      }
+    });
+  }
+
+  let row = document.getElementById(rowId);
+  if (!row) {
+    // Dynamic row (e.g. second REPORT event)
+    row = document.createElement('div');
+    row.className = 'stage-row';
+    row.id = rowId + '_' + Date.now();
+    row.innerHTML = `
+      <span class="stage-icon active" id="">&#10226;</span>
+      <span class="stage-name">${escHtml(stage)}</span>
+      <span class="stage-msg">${escHtml(message)}</span>
+    `;
+    if (rowsEl) rowsEl.appendChild(row);
+  } else {
+    row.classList.remove('stage-pending');
+    const ic = document.getElementById(iconId);
+    if (ic) { ic.className = 'stage-icon active'; ic.innerHTML = '&#10226;'; }
+    const msg = document.getElementById(msgId);
+    if (msg) msg.textContent = message;
+  }
+
+  // Update group icon
+  updateGroupIcon(groupKey, 'active');
+
+  // Special: show scanned text for LEGAL
+  if (stage === 'LEGAL') {
+    const msg2 = document.getElementById(msgId);
+    if (msg2) msg2.textContent = message;
+  }
+
+  // Cost accumulation: GENERATE completion means an image was queued
+  if (stage === 'GENERATE' && message.includes('Image saved:')) {
+    S.generatedCount++;
+    const cost = S.prefs.provider === 'flux' ? 0.05 : 0.04;
+    S.costEstimate += cost;
+    const costEl = document.getElementById('progressCost');
+    costEl.style.display = '';
+    costEl.textContent = '$' + S.costEstimate.toFixed(2) + ' so far';
+  }
+
+  // Mark group done on SUMMARY / REPORT done
+  if (stage === 'SUMMARY' || (stage === 'REPORT' && message.startsWith('Report saved:'))) {
+    markGroupDone(groupKey);
+  }
+
+  // Scroll progress into view
+  document.getElementById('progressCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function onPrompt(ev) {
+  const pid = ev.product_id;
+  S.promptByProduct[pid] = ev.prompt;
+
+  const groupKey = 'product_' + pid;
+  const rowsEl = document.getElementById('rows_' + groupKey);
+  if (!rowsEl) return;
+
+  // Attach prompt toggle under the GENERATE row
+  const genRow = document.getElementById('row_' + groupKey + '_GENERATE');
+  if (!genRow) return;
+
+  let wrap = document.getElementById('prompt_wrap_' + pid);
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'stage-prompt-wrap';
+    wrap.id = 'prompt_wrap_' + pid;
+    wrap.innerHTML = `
+      <button class="stage-prompt-toggle" onclick="togglePrompt('${pid}')">&#9660; Prompt</button>
+      <div class="stage-prompt-text" id="prompt_text_${pid}">${escHtml(ev.prompt)}</div>
+    `;
+    genRow.parentNode.insertBefore(wrap, genRow.nextSibling);
+  }
+}
+
+function togglePrompt(pid) {
+  const el = document.getElementById('prompt_text_' + pid);
+  if (el) el.classList.toggle('open');
+}
+
+function updateGroupIcon(groupKey, status) {
+  const iconEl = document.getElementById('grpIcon_' + groupKey);
+  if (!iconEl) return;
+  if (status === 'active') { iconEl.innerHTML = '&#10226;'; iconEl.style.color = 'var(--accent2)'; iconEl.style.animation = 'spin 1s linear infinite'; }
+  else if (status === 'done') { iconEl.innerHTML = '&#10003;'; iconEl.style.color = 'var(--green)'; iconEl.style.animation = ''; }
+  else if (status === 'error') { iconEl.innerHTML = '&#10007;'; iconEl.style.color = 'var(--red)'; iconEl.style.animation = ''; }
+}
+
+function markGroupDone(groupKey) {
+  updateGroupIcon(groupKey, 'done');
+  const rowsEl = document.getElementById('rows_' + groupKey);
+  if (!rowsEl) return;
+  rowsEl.querySelectorAll('.stage-icon.active').forEach(ic => {
+    ic.className = 'stage-icon done';
+    ic.innerHTML = '&#10003;';
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Progressive image reveal                                             */
+/* ------------------------------------------------------------------ */
+function buildResultsSkeleton(productIds) {
+  const body = document.getElementById('resultsBody');
+  body.innerHTML = '';
+  S.lastRunOutputs = {};
+
+  productIds.forEach((pid, pIdx) => {
+    S.lastRunOutputs[pid] = [];
+    const label = pid.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const section = document.createElement('div');
+    section.className = 'product-section';
+    section.id = 'product_section_' + pid;
+    section.innerHTML = `
+      <div class="product-section-header">
+        <span class="product-section-name">${escHtml(label)}</span>
+        <div class="product-section-rule"></div>
+      </div>
+      <div class="format-grid" id="format_grid_${pid}"></div>
+    `;
+    body.appendChild(section);
+
+    const grid = section.querySelector('.format-grid');
+    FORMATS.forEach((fmt, fIdx) => {
+      const card = document.createElement('div');
+      card.className = 'format-card';
+      card.id = 'fcard_' + pid + '_' + fmt.name;
+      card.innerHTML = `
+        <div class="format-label">${escHtml(fmt.label)}</div>
+        <div class="format-img-wrap ${fmt.ar}">
+          <div class="skeleton-shimmer"></div>
+          <img class="format-img" id="fimg_${pid}_${fmt.name}" alt="${escHtml(fmt.label)} for ${escHtml(label)}">
+          <div class="compliance-badge" id="cbadge_${pid}_${fmt.name}" style="display:none"></div>
+          <div class="download-overlay">
+            <a class="download-btn" id="dlink_${pid}_${fmt.name}" download>&#8595; Download</a>
+          </div>
+        </div>
+        <div class="format-caption">Generating via ${S.prefs.provider === 'flux' ? 'Flux 1.1 Pro' : 'GPT Image 1'} &middot; ${escHtml(fmt.dim)}</div>
+      `;
+      grid.appendChild(card);
+    });
+  });
+
+  document.getElementById('resultsCard').style.display = 'block';
+}
+
+function onImagesReady(ev) {
+  const pid = ev.product_id;
+  FORMATS.forEach((fmt, i) => {
+    const src = '/outputs/' + pid + '/' + fmt.name + '.png';
+    const img = document.getElementById('fimg_' + pid + '_' + fmt.name);
+    const dlink = document.getElementById('dlink_' + pid + '_' + fmt.name);
+    if (!img) return;
+
+    setTimeout(() => {
+      img.onload = () => img.classList.add('loaded');
+      img.onerror = () => {}; // keep shimmer on error
+      img.src = src;
+      if (dlink) {
+        dlink.href = src;
+        dlink.download = pid + '_' + fmt.name + '.png';
+      }
+    }, i * 120);
+  });
+
+  markGroupDone('product_' + pid);
+}
+
+/* ------------------------------------------------------------------ */
+/* Run complete                                                         */
+/* ------------------------------------------------------------------ */
+function onComplete(ev) {
+  const result = ev.result || {};
+  S.lastRunSummary = result.run_summary || {};
+  S.running = false;
+
+  stopElapsedTimer();
+  topbarComplete();
+
+  // Finalize run button
+  const runBtn = document.getElementById('runBtn');
+  runBtn.classList.remove('running');
+  runBtn.disabled = false;
+  document.getElementById('runBtnLabel').textContent = 'Run Pipeline';
+
+  // Mark all groups done
+  ['validation', 'output'].forEach(k => markGroupDone(k));
+  const products = Object.keys(result.outputs_by_product || {});
+  products.forEach(pid => markGroupDone('product_' + pid));
+
+  // Metrics row
+  const rs = S.lastRunSummary;
+  const metrics = [
+    { label: 'Products',  value: rs.products_total || 0, cls: '' },
+    { label: 'Generated', value: rs.generated || 0,      cls: 'green' },
+    { label: 'Reused',    value: rs.reused || 0,         cls: '' },
+    { label: 'Duration',  value: (rs.duration_s || 0).toFixed(1) + 's', cls: '' },
+    { label: 'Est. Cost', value: '$' + ((rs.cost_estimate || 0)).toFixed(4), cls: 'green' },
+  ];
+  document.getElementById('metricsRow').innerHTML = metrics.map(m =>
+    `<div class="metric"><div class="metric-value ${m.cls}">${escHtml(String(m.value))}</div><div class="metric-label">${m.label}</div></div>`
+  ).join('');
+
+  document.getElementById('downloadAllBtn').disabled = false;
+  document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // Apply compliance badges from results
+  const compliance = result.compliance_by_product || {};
+  Object.entries(compliance).forEach(([pid, perImage]) => {
+    Object.entries(perImage).forEach(([imgPath, c]) => {
+      FORMATS.forEach(fmt => {
+        if (imgPath.includes(fmt.name)) {
+          const badge = document.getElementById('cbadge_' + pid + '_' + fmt.name);
+          if (!badge) return;
+          const passed = (c.logo_check && c.logo_check.passed !== false) &&
+                         (c.color_check && c.color_check.passed !== false);
+          badge.style.display = 'block';
+          badge.className = 'compliance-badge ' + (passed ? 'pass' : 'warn');
+          badge.title = JSON.stringify(c);
+        }
+      });
+    });
+  });
+
+  toast('Pipeline complete!', 'success');
+  loadHistory();
+}
+
+function onRunError(msg) {
+  S.running = false;
+  stopElapsedTimer();
+  topbarStop();
+
+  const runBtn = document.getElementById('runBtn');
+  runBtn.classList.remove('running');
+  runBtn.disabled = false;
+  document.getElementById('runBtnLabel').textContent = 'Run Pipeline';
+
+  const errEl = document.getElementById('runErrorInline');
+  errEl.style.display = 'block';
+  errEl.textContent = msg;
+  toast(msg, 'error');
+}
+
+/* ------------------------------------------------------------------ */
+/* Elapsed timer                                                        */
+/* ------------------------------------------------------------------ */
+function startElapsedTimer() {
+  S.startTime = Date.now();
+  S.elapsedInterval = setInterval(() => {
+    const secs = ((Date.now() - S.startTime) / 1000).toFixed(1);
+    document.getElementById('progressTimer').textContent = secs + 's elapsed';
+  }, 100);
+}
+
+function stopElapsedTimer() {
+  if (S.elapsedInterval) { clearInterval(S.elapsedInterval); S.elapsedInterval = null; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Top progress bar                                                     */
+/* ------------------------------------------------------------------ */
+function topbarStart(indeterminate) {
+  const bar = document.getElementById('topbar');
+  const fill = document.getElementById('topbar-fill');
+  bar.classList.add('active');
+  fill.style.width = '0%';
+  if (indeterminate) {
+    bar.classList.add('indeterminate');
+  } else {
+    bar.classList.remove('indeterminate');
+    fill.style.width = '5%';
+  }
+}
+
+function topbarProgress(pct) {
+  document.getElementById('topbar').classList.remove('indeterminate');
+  document.getElementById('topbar-fill').style.width = pct + '%';
+}
+
+function topbarComplete() {
+  topbarProgress(100);
+  setTimeout(() => {
+    document.getElementById('topbar').classList.remove('active');
+    document.getElementById('topbar-fill').style.width = '0%';
+  }, 600);
+}
+
+function topbarStop() {
+  document.getElementById('topbar').classList.remove('active', 'indeterminate');
+  document.getElementById('topbar-fill').style.width = '0%';
+}
+
+/* ------------------------------------------------------------------ */
+/* Campaign history                                                     */
+/* ------------------------------------------------------------------ */
+async function loadHistory() {
+  try {
+    const r = await fetch('/api/campaigns');
+    S.history = await r.json();
+    renderHistory(S.history);
+  } catch (_) {}
+}
+
+function fmtCampaignId(id) {
+  return (id || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function renderHistory(rows) {
+  const list = document.getElementById('historyList');
+  if (!rows || rows.length === 0) {
+    list.innerHTML = '<div class="sidebar-empty">No campaigns yet.<br>Run the pipeline to start.</div>';
+    return;
+  }
+
+  const groups = {};
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+  rows.forEach(r => {
+    const ds = new Date(r.created_at).toDateString();
+    const label = ds === today ? 'Today' : ds === yesterday ? 'Yesterday'
+      : new Date(r.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    if (!groups[label]) groups[label] = [];
+    groups[label].push(r);
+  });
+
+  list.innerHTML = '';
+
+  Object.entries(groups).forEach(([label, items]) => {
+    const groupEl = document.createElement('div');
+    groupEl.className = 'sidebar-date-group';
+    groupEl.textContent = label;
+    list.appendChild(groupEl);
+
+    items.forEach(row => {
+      const summary = row.summary_json || {};
+      const cost = summary.cost_estimate != null
+        ? '$' + Number(summary.cost_estimate).toFixed(2) : '';
+      const provider = (row.provider || '').replace('gpt-image-1', 'GPT Image 1');
+      const timeStr = new Date(row.created_at)
+        .toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+      const title = fmtCampaignId(row.campaign_id);
+
+      let thumbHtml = '';
+      try {
+        const paths = typeof row.output_paths_json === 'string'
+          ? JSON.parse(row.output_paths_json) : (row.output_paths_json || {});
+        const allPaths = Object.values(paths).flat();
+        const shown = allPaths.slice(0, 3);
+        const extra = allPaths.length - shown.length;
+        thumbHtml = shown.map(p => {
+          const parts = p.replace(/\\/g, '/').split('/');
+          const outIdx = parts.lastIndexOf('outputs');
+          const url = outIdx >= 0 ? '/outputs/' + parts.slice(outIdx + 1).join('/') : '';
+          return url ? `<img class="hc-thumb" src="${url}" alt="" loading="lazy">` : '';
+        }).join('');
+        if (extra > 0) thumbHtml += `<div class="hc-thumb-more">+${extra}</div>`;
+      } catch (_) {}
+
+      const card = document.createElement('div');
+      card.className = 'history-card';
+      card.innerHTML = `
+        <div class="hc-top">
+          <span class="hc-name" title="${escHtml(row.campaign_id)}">${escHtml(title)}</span>
+          <button class="hc-rerun" title="Re-run"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+        </div>
+        <div class="hc-meta">
+          <span>${timeStr}</span>
+          ${cost ? `<span class="hc-cost">${escHtml(cost)}</span>` : ''}
+          ${provider ? `<span class="hc-provider">${escHtml(provider)}</span>` : ''}
+        </div>
+        ${thumbHtml ? `<div class="hc-thumbs">${thumbHtml}</div>` : ''}
+      `;
+
+      card.addEventListener('click', e => {
+        if (e.target.closest('.hc-rerun')) return;
+        loadCampaign(row.id);
+        list.querySelectorAll('.history-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+      });
+
+      card.querySelector('.hc-rerun').addEventListener('click', async e => {
+        e.stopPropagation();
+        await loadCampaign(row.id);
+        runPipeline();
+      });
+
+      list.appendChild(card);
+    });
+  });
+}
+
+async function loadCampaign(id) {
+  try {
+    const r = await fetch('/api/campaigns/' + id);
+    const data = await r.json();
+    S.brief = data.brief_json;
+    S.nlParseUsed = false;
+    renderJsonEditor(data.brief_json);
+    showBriefPreview(data.brief_json);
+    document.getElementById('briefPreview').style.display = 'block';
+    document.getElementById('jsonSection').style.display = 'none';
+    document.getElementById('runBtn').disabled = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (_) {}
+}
+
+/* ------------------------------------------------------------------ */
+/* Log toggle                                                           */
+/* ------------------------------------------------------------------ */
+document.getElementById('logToggle').addEventListener('click', () => {
+  const log = document.getElementById('progressLog');
+  const toggle = document.getElementById('logToggle');
+  log.classList.toggle('open');
+  toggle.innerHTML = log.classList.contains('open') ? 'Hide log &#9650;' : 'Show log &#9660;';
+});
+
+/* ------------------------------------------------------------------ */
+/* Keyboard shortcuts                                                   */
+/* ------------------------------------------------------------------ */
+document.addEventListener('keydown', e => {
+  const ctrl = e.ctrlKey || e.metaKey;
+  if (ctrl && e.key === 'Enter') { e.preventDefault(); if (!document.getElementById('runBtn').disabled) runPipeline(); }
+  if (ctrl && e.shiftKey && e.key === 'P') { e.preventDefault(); parseBrief(); }
+  if (e.key === 'Escape') closeDrawer();
+  if (ctrl && e.key === ',') { e.preventDefault(); openDrawer(); }
+  if (ctrl && e.key === 'e') { e.preventDefault(); document.getElementById('exportJsonBtn').click(); }
+});
+
+/* ------------------------------------------------------------------ */
+/* Toast                                                                */
+/* ------------------------------------------------------------------ */
+let toastTimer = null;
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (type ? ' ' + type : '');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+/* ------------------------------------------------------------------ */
+/* Prefs                                                                */
+/* ------------------------------------------------------------------ */
+function savePrefs() {
+  localStorage.setItem('cp_prefs', JSON.stringify(S.prefs));
+}
+
+function loadPrefs() {
+  try {
+    const p = JSON.parse(localStorage.getItem('cp_prefs') || '{}');
+    Object.assign(S.prefs, p);
+  } catch (_) {}
+}
+
+/* ------------------------------------------------------------------ */
+/* Utility                                                              */
+/* ------------------------------------------------------------------ */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/* ------------------------------------------------------------------ */
+/* Sidebar collapse                                                     */
+/* ------------------------------------------------------------------ */
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const collapsed = sidebar.classList.toggle('collapsed');
+  const btn = document.getElementById('sidebarToggle');
+  btn.style.opacity = collapsed ? '0.45' : '1';
+  localStorage.setItem('cp_sidebar', collapsed ? 'closed' : 'open');
+}
+
+document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+
+if (localStorage.getItem('cp_sidebar') === 'closed') {
+  document.querySelector('.sidebar').classList.add('collapsed');
+  document.getElementById('sidebarToggle').style.opacity = '0.45';
+}
+
+/* ------------------------------------------------------------------ */
+/* Boot                                                                 */
+/* ------------------------------------------------------------------ */
+init();
+</script>
+<footer style="text-align:center;padding:24px 0 16px;font-size:12px;color:#555;letter-spacing:0.04em;">&copy; 2026 Reflector Studios</footer>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Runtime outputs (committed selectively via docs/)
+outputs/*
+!outputs/.gitkeep
+assets/generated/*
+!assets/generated/.gitkeep
+campaigns/*
+!campaigns/.gitkeep
+
+# Runtime logs and database
+campaign_run.log
+campaigns.db
+
+# OS
+.DS_Store
+Thumbs.db

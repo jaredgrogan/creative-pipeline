@@ -1,0 +1,26 @@
+{
+  "campaign_id": "viva_summer",
+  "region": "US",
+  "language": "en",
+  "target_audience": "health-conscious adults 25-40",
+  "campaign_message": "Long Live Summer.",
+  "brand": {
+    "name": "Viva",
+    "logo_path": "assets/viva_logo.png",
+    "colors": ["#2ECC71", "#FFFFFF", "#1A1A2E"]
+  },
+  "products": [
+    {
+      "id": "viva_sparkling_water",
+      "name": "Viva Sparkling Water",
+      "description": "Premium sparkling water in a sleek dark green glass bottle with a simple label that reads Viva, bottle centered in frame, symmetrical composition, a glass of sparkling water with a single lime wedge perched on the rim of the glass beside the bottle, outdoor Mediterranean setting, deep blue sea filling the background, bright natural summer light, condensation on glass, coastal lifestyle, professional beverage photography",
+      "asset_path": null
+    },
+    {
+      "id": "viva_energy_bar",
+      "name": "Viva Energy Bar",
+      "description": "Natural energy bar with visible oats and dark chocolate chips on a rustic wooden surface, warm morning light, health and vitality",
+      "asset_path": null
+    }
+  ]
+}

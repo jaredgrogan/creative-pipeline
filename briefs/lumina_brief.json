@@ -1,0 +1,26 @@
+{
+  "campaign_id": "lumina_wellness",
+  "region": "US",
+  "language": "en",
+  "target_audience": "millennial women 28-40",
+  "campaign_message": "Glow From Within.",
+  "brand": {
+    "name": "Lumina",
+    "logo_path": null,
+    "colors": ["#C9A84C", "#FFFFF0", "#F5ECD7"]
+  },
+  "products": [
+    {
+      "id": "lumina_vitality_serum",
+      "name": "Lumina Vitality Serum",
+      "description": "Elegant glass serum bottle with a gold dropper top, soft ivory background, warm golden morning light casting a gentle glow, fresh botanical leaves and petals arranged nearby, luxury skincare aesthetic, clean beauty product photography",
+      "asset_path": null
+    },
+    {
+      "id": "lumina_daily_glow_moisturizer",
+      "name": "Lumina Daily Glow Moisturizer",
+      "description": "Minimalist cream jar with a soft gold lid on an ivory marble surface, delicate flower petals and a sprig of greenery nearby, diffused natural window light, warm and luminous, luxury skincare product photography",
+      "asset_path": null
+    }
+  ]
+}

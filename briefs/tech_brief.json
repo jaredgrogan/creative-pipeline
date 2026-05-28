@@ -1,0 +1,26 @@
+{
+  "campaign_id": "techflow_pro_launch",
+  "region": "EU",
+  "language": "en",
+  "target_audience": "remote workers and developers",
+  "campaign_message": "Work Without Limits.",
+  "brand": {
+    "name": "TechFlow",
+    "logo_path": null,
+    "colors": ["#1A1A2E", "#FFFFFF", "#4A90D9"]
+  },
+  "products": [
+    {
+      "id": "techflow_pro_14",
+      "name": "TechFlow Pro 14",
+      "description": "Sleek premium laptop with dark navy and brushed silver finish, open screen emitting a soft blue glow, placed on a minimalist desk with clean lines, dramatic side lighting, professional technology product photography",
+      "asset_path": null
+    },
+    {
+      "id": "techflow_wireless_hub",
+      "name": "TechFlow Wireless Hub",
+      "description": "Compact wireless hub with multiple ports in a dark navy matte finish, arranged on a clean white surface with subtle cable connections fanning out, top-down product shot, professional technology product photography",
+      "asset_path": null
+    }
+  ]
+}

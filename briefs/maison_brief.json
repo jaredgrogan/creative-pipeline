@@ -1,0 +1,26 @@
+{
+  "campaign_id": "maison_arc_seasonal",
+  "region": "US",
+  "language": "en",
+  "target_audience": "style-conscious urban professionals 25-35",
+  "campaign_message": "Wear the Season.",
+  "brand": {
+    "name": "Maison Arc",
+    "logo_path": null,
+    "colors": ["#722F37", "#F5F0E8", "#2C2C2C"]
+  },
+  "products": [
+    {
+      "id": "arc_structured_blazer",
+      "name": "Arc Structured Blazer",
+      "description": "Impeccably structured contemporary blazer in deep burgundy, displayed on a clean form against a warm cream background, architectural fashion photography with dramatic shadow, editorial fashion aesthetic",
+      "asset_path": null
+    },
+    {
+      "id": "arc_minimal_sneaker",
+      "name": "Arc Minimal Sneaker",
+      "description": "Clean minimal sneaker in warm cream leather with deep burgundy accent stitching and sole, studio product photography on a white surface, side profile shot, contemporary fashion editorial aesthetic",
+      "asset_path": null
+    }
+  ]
+}
